@@ -1,5 +1,8 @@
 import express from 'express';
+import MindsDBConnector from '../config/mindsdb';
 
+// Create an instance of the MindsDBConnector
+const mindsDB = new MindsDBConnector();
 const app = express();
 
 app.get('/', (req, res) => {
@@ -7,13 +10,28 @@ app.get('/', (req, res) => {
     message: 'Hello World!',
     status: 'OK' 
   });
-})
+});
 
 app.get('/health', (req, res) => {
-  // You can add custom checks for your application here
-  // For example, check the connection to a database or other services
+  res.status(200).json({ status: 'OK' });
+});
 
-  // If everything is OK, return a 200 status code and a JSON response
+app.get('/connect', async (req, res) => {
+  const connection = await mindsDB.connectToMindsDB();
+
+  if (connection) {
+    res.status(200).json({ status: 'OK' });
+  } else {
+    res.status(500).json({ status: 'ERROR' });
+  }
+});
+
+app.get('/database/:dbname', async (req, res) => {
+  const dbName = req.params.dbname;
+  const database = await mindsDB.getDatabase(dbName);
+
+  console.log(database);
+
   res.status(200).json({ status: 'OK' });
 });
 

@@ -13,8 +13,10 @@ class MindsDBConnector {
         password: env.MINDSDB_PASS,
       });
       console.log('Connected to MindsDB');
+      return true;
     } catch (error) {
       console.error('Failed to connect to MindsDB:', error.message);
+      return false;
     }
   }
 
