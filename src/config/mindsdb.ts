@@ -1,4 +1,4 @@
-import MindsDB, { ConnectionOptions, Database } from 'mindsdb-js-sdk';
+import MindsDB, { ConnectionOptions, Database, JsonValue } from 'mindsdb-js-sdk';
 
 class MindsDBConnector {
   private connectionState: boolean = false;
@@ -23,6 +23,8 @@ class MindsDBConnector {
   async connect() {
     try {
       await MindsDB.connect(this.options);
+      // connection function does not return success status
+      // so we use a "get all" to check for good connection
       await MindsDB.Databases.getAllDatabases();
 
       console.log('Connected to MindsDB');
@@ -39,26 +41,55 @@ class MindsDBConnector {
   }
 
   async getAllDatabases(): Promise<[Database[] | null, Error | null]> {
-    if (!this.connectionState) {
-      return [null, Error('Not Connected to MindsDB')]
-    } else {
+    if (this.connectionState) {
       try {
-        if (this.connectionState) return [await MindsDB.Databases.getAllDatabases(), null]
+        return [await MindsDB.Databases.getAllDatabases(), null]
       } catch (err) {
         return [null, err]
       }
+    } else {
+      return [null, Error('Not Connected to MindsDB')]
     }
   }
 
   async getDatabase(name: string): Promise<[Database | null, Error | null]> {
-    if (!this.connectionState) {
-      return [null, Error('Not Connected to MindsDB')]
-    } else {
+    if (this.connectionState) {
       try {
         return [await MindsDB.Databases.getDatabase(name), null]
       } catch (err) {
         return [null, err]
       }
+    } else {
+      return [null, Error('Not Connected to MindsDB')]
+    }
+  }
+
+  async createDatabase(
+    name: string, 
+    engine?: string, 
+    params?: Record<string, JsonValue>
+  ): Promise<[Database | null, Error | null]> {
+    if (this.connectionState) {
+      try {
+        return [await MindsDB.Databases.createDatabase(name, engine, params), null]
+      } catch (err) {
+        return [null, err]
+      }
+    } else {
+      return [null, Error('Not Connected to MindsDB')]
+    }
+  }
+
+  async deleteDatabase(name: string): Promise<[string | null, Error | null]> {
+    if (this.connectionState) {
+      try {
+        await MindsDB.Databases.deleteDatabase(name)
+        return [`Attempted to delete DB: ${name}`, null]
+      } catch (err) {
+        return [null, err]
+      }
+    } else {
+      return [null, Error('Not Connected to MindsDB')]
     }
   }
 }
