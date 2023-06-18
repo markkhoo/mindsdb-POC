@@ -20,9 +20,9 @@ app.get('/connect', async (req, res) => {
   const connection = await mindsDB.connectToMindsDB();
 
   if (connection) {
-    res.status(200).json({ status: 'OK' });
+    res.status(200).json({ status: 'OK', message: 'Connected to MindsDB' });
   } else {
-    res.status(500).json({ status: 'ERROR' });
+    res.status(500).json({ status: 'ERROR', message: 'Failed to connect to MindsDB' });
   }
 });
 
@@ -32,7 +32,7 @@ app.get('/database/:dbname', async (req, res) => {
 
   console.log(database);
 
-  res.status(200).json({ status: 'OK' });
+  res.status(200).json({ status: 'OK', data: database });
 });
 
 export default app;
