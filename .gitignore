@@ -1,0 +1,26 @@
+# Logs
+logs
+*.log
+
+# Dependencies
+node_modules
+
+# Compiled output
+dist
+build
+
+# Environment variables
+.env
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Editor and IDE files
+.idea
+.vscode
+
+# Build files
+package-lock.json
+npm-debug.log
+yarn-error.log
